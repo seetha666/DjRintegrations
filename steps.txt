@@ -1,0 +1,48 @@
+to integrate project we need to add this steps
+in settings.py 
+install djangorestframework 3.12.0
+django-cors-headers 4.4.0
+installed apps ('corsheaders',)
+
+in middlewares ('corsheaders.middleware.CorsMiddleware',)
+in below of default_auto_field
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+--------------------------------
+
+to add swagger to this ?
+first we need to install pip install drf-yasg
+
+step1: in view class we need to add below this
+from rest_framework import views
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+stp2: we need to add this decorator to our view file or class
+  @swagger_auto_schema(
+        operation_description="Retrieve an example item",
+        responses={200: openapi.Response('Description', ExampleSerializer)}
+    )
+
+step:3 in urls file we need add this
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Your API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@yourapi.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+ 
+ inside urlpattern we nee to do add this files
+ urlpatterns = [
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    # Your other URL patterns
+]
